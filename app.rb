@@ -105,7 +105,12 @@ module OnlineKitchen
           }.to_json
         end
       end
-    end
+
+      put '/configurations/:cid/machines/:mid' do |cid, mid|
+        configuration = current_user.configuration.find(cid)
+        # TODO: Handle persistent machine flag
+        # TODO: Handle expiration date extension
+      end
 
     error ActiveRecord::RecordNotFound do
       halt 404, { message: 'Not found' }.to_json

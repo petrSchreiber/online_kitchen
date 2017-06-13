@@ -15,6 +15,8 @@
 #  cluster          :string
 #
 
+require 'date'
+
 # Machine representation
 class Machine < ActiveRecord::Base
   belongs_to :configuration, inverse_of: :machines
@@ -32,6 +34,7 @@ class Machine < ActiveRecord::Base
   validate :environment_has_allowed_structure
   validate :image_is_valid
 
+  before_create :set_default_expiration
   after_commit :schedule_provision_vm, on: :create
 
   serialize :environment, JSON
@@ -151,5 +154,9 @@ class Machine < ActiveRecord::Base
     unless ProviderTemplate.include_image?(image)
       errors.add(:image, 'passed image is not supported')
     end
+  end
+
+  def set_default_expiration
+    self.expiration = Date.today + 31.days
   end
 end
